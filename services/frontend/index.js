@@ -35,6 +35,10 @@ function newBook(book) {
     return div;
 }
 
+function getElementByXpath(path) {
+  return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+
 function calculateShipping(id, cep) {
     fetch('http://localhost:3000/shipping/' + cep)
         .then((data) => {
@@ -50,6 +54,20 @@ function calculateShipping(id, cep) {
             swal('Erro', 'Erro ao consultar frete', 'error');
             console.error(err);
         });
+}
+
+function display_id_search() {
+    
+    swal('SEARCH BY ID');
+    getElementByXpath('/html/body/div[2]/div/div[1]').style = 'font-size: 32px;';
+    searchbox = `
+        <div>
+            <label for="ID">BOOK ID:</label><br>
+            <input type="number" id="ID" name="BOOK-ID"><br>
+        </div>
+    `;
+    getElementByXpath('/html/body/div[2]/div/div[1]').after(searchbox);
+
 }
 
 document.addEventListener('DOMContentLoaded', function () {
