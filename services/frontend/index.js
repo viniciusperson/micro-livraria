@@ -57,17 +57,57 @@ function calculateShipping(id, cep) {
 }
 
 function display_id_search() {
-    
     swal('SEARCH BY ID');
-    getElementByXpath('/html/body/div[2]/div/div[1]').style = 'font-size: 32px;';
-    searchbox = `
+
+    const target = getElementByXpath('/html/body/div[2]/div/div[1]');
+    target.style.fontSize = '32px';
+
+    const searchbox = `
         <div>
             <label for="ID">BOOK ID:</label><br>
-            <input type="number" id="ID" name="BOOK-ID"><br>
+            <div style="width: 100%;">
+                <div class="control">
+                    <input class="input" type="number" id="ID" name="BOOK-ID" placeholder="Digite o ID" />
+                </div>
+                <div class="control">
+                    <a class="button is-info" id="button-search-id"> Buscar </a>
+                </div>
+            </div>
         </div>
     `;
-    getElementByXpath('/html/body/div[2]/div/div[1]').after(searchbox);
 
+    target.insertAdjacentHTML('afterend', searchbox);
+
+    document.querySelector('#button-search-id').addEventListener('click', () => {
+        const id = document.querySelector('#ID').value;
+        searchById(id);
+    });
+}
+
+function searchById(id) {
+    fetch('http://localhost:3000/product/' + id)
+        .then((data) => {
+            if (data.ok) {
+                return data.json();
+            }
+            throw data.statusText;
+        })
+        .then((data) => {
+        
+            const target = getElementByXpath('/html/body/div[2]/div/div[2]');
+            target.after('afterend', newBook(data));
+
+            const edit = getElementByXpath('/html/body/div[2]/div/div[3]');
+            edit.className = '';
+            const remove_margin = getElementByXpath('/html/body/div[2]/div/div[3]/div');
+            remove_margin.style = "margin:0";
+            
+
+        })
+        .catch((err) => {
+            swal('Erro', 'Livro não encontrado', 'error');
+            console.error(err);
+        });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
